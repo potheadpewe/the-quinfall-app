@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, EMPTY, expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
+import { catchError, concatMap, defer, EMPTY, expand, last, map, Observable, of, reduce, takeWhile, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,25 +12,27 @@ export class ItemService {
 
   loadAllChunks<T>(baseName: string): Observable<T[]> {
     const baseUrl = `${this.basePath}data/`;
-
-    // Try the singular file first (e.g., baseName_data.json)
     const singularUrl = `${baseUrl}${baseName}_data.json`;
 
     return this.http.get<T[]>(singularUrl).pipe(
-      // If singular file exists, return it
       catchError(() => {
-        // If singular file not found, try chunked files starting from index 1
-        return of(1).pipe(
+        let allChunks: T[] = [];
+
+        return of(1).pipe( // Start with chunk index 1
           expand(index => {
             const chunkUrl = `${baseUrl}${baseName}_data${index}.json`;
             console.log('Trying chunk:', chunkUrl);
+
             return this.http.get<T[]>(chunkUrl).pipe(
-              map(chunk => ({ index: index + 1, chunk })),
-              catchError(() => EMPTY) // stop if file not found
+              tap(chunk => {
+                allChunks = allChunks.concat(chunk);
+              }),
+              map(() => index + 1), // Emit next index number for expand
+              catchError(() => EMPTY) // Stop expanding when chunk not found
             );
           }),
-          map(({ chunk }) => chunk),
-          reduce((all, chunk) => all.concat(chunk), [] as T[])
+          last(), // Wait until expand completes
+          map(() => allChunks) // Emit all loaded chunks concatenated
         );
       })
     );
