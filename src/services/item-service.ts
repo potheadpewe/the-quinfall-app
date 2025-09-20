@@ -20,7 +20,7 @@ export class ItemService {
       expand(() => {
         const fileName =
           index === 1 ? `${baseName}_data.json` : `${baseName}_data${index}.json`;
-        return this.http.get<T[]>(`assets/data/${fileName}`).pipe(
+        return this.http.get<T[]>(`data/${fileName}`).pipe(
           catchError(() => of(null)),
           map((data) => {
             index++;
