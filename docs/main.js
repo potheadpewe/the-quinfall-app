@@ -902,11 +902,22 @@ class ItemService {
   }
   loadAllChunks(baseName) {
     let index = 1;
+    let firstFileTried = false;
     return (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.expand)(() => {
-      const fileName = index === 1 ? `${baseName}_data.json` : `${baseName}_data${index}.json`;
-      index++;
-      console.log(`${this.basePath}data/${fileName}`);
-      return this.http.get(`${this.basePath}data/${fileName}`).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null)));
+      let fileName;
+      // First try the singular file, e.g. items_data.json
+      if (!firstFileTried) {
+        fileName = `${baseName}_data.json`;
+        firstFileTried = true;
+      } else {
+        // Then try the numbered chunks: items_data1.json, items_data2.json...
+        fileName = `${baseName}_data${index}.json`;
+        index++;
+      }
+      const url = `${this.basePath}data/${fileName}`;
+      console.log(`Loading: ${url}`);
+      return this.http.get(url).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null)) // Stop when file doesn't exist
+      );
     }), (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.takeWhile)(data => data !== null), (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.reduce)((all, chunk) => all.concat(chunk), []));
   }
   static ɵfac = function ItemService_Factory(__ngFactoryType__) {
