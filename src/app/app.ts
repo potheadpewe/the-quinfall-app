@@ -32,11 +32,11 @@ export class App  implements OnInit {
   materialSearchText: string = '';
 
   constructor(private itemService: ItemService) {}
-
+  private basePath = document.querySelector('base')?.getAttribute('href') || '/';
   ngOnInit(): void {
     this.isLoading = true;
     this.hasError = false;
-
+    console.log(`${this.basePath}`);
     forkJoin({
       items: this.itemService.loadAllChunks<Item>('items'),
       props: this.itemService.loadAllChunks<Prop>('props'),

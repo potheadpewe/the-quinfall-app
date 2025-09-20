@@ -750,9 +750,11 @@ class App {
   constructor(itemService) {
     this.itemService = itemService;
   }
+  basePath = document.querySelector('base')?.getAttribute('href') || '/';
   ngOnInit() {
     this.isLoading = true;
     this.hasError = false;
+    console.log(`${this.basePath}`);
     (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.forkJoin)({
       items: this.itemService.loadAllChunks('items'),
       props: this.itemService.loadAllChunks('props'),
