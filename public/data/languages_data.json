@@ -1,3 +1,54 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3edb41d58487d1d78b8763dbe8959e5b7a230cacd2552d3ed5b2c3d939b4379b
-size 798
+[
+  {
+    "description": "Chinese",
+    "short": "ZH"
+  },
+  {
+    "description": "English",
+    "short": "EN"
+  },
+  {
+    "description": "French",
+    "short": "FR"
+  },
+  {
+    "description": "German",
+    "short": "DE"
+  },
+  {
+    "description": "Italian",
+    "short": "IT"
+  },
+  {
+    "description": "Japanese",
+    "short": "JA"
+  },
+  {
+    "description": "Korean",
+    "short": "KO"
+  },
+  {
+    "description": "Polish",
+    "short": "PL"
+  },
+  {
+    "description": "Portuguese",
+    "short": "PT"
+  },
+  {
+    "description": "Russian",
+    "short": "RU"
+  },
+  {
+    "description": "Spanish",
+    "short": "ES"
+  },
+  {
+    "description": "Turkish",
+    "short": "TR"
+  },
+  {
+    "description": "Ukrainian",
+    "short": "UK"
+  }
+]
