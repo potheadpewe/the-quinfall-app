@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, expand, Observable, of, reduce, takeWhile } from 'rxjs';
+import { catchError, expand, map, Observable, of, reduce, takeWhile } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,32 +11,31 @@ export class ItemService {
   constructor(private http: HttpClient) {}
 
   loadAllChunks<T>(baseName: string): Observable<T[]> {
-    let index = 1;
-    let firstFileTried = false;
+  const singularUrl = `${this.basePath}data/${baseName}_data.json`;
 
-    return of(null).pipe(
-      expand(() => {
-        let fileName: string;
+  return this.http.get<T[]>(singularUrl).pipe(
+      // ✅ If singular file exists, return it
+      map((data) => data || []),
+      catchError(() => {
+        // 🔁 Otherwise, fall back to chunked files
+        let index = 1;
 
-        // First try the singular file, e.g. items_data.json
-        if (!firstFileTried) {
-          fileName = `${baseName}_data.json`;
-          firstFileTried = true;
-        } else {
-          // Then try the numbered chunks: items_data1.json, items_data2.json...
-          fileName = `${baseName}_data${index}.json`;
-          index++;
-        }
-
-        const url = `${this.basePath}data/${fileName}`;
-        console.log(`Loading: ${url}`);
-
-        return this.http.get<T[]>(url).pipe(
-          catchError(() => of(null))  // Stop when file doesn't exist
+        return of(null).pipe(
+          expand(() => {
+            const chunkUrl = `${this.basePath}data/${baseName}_data${index}.json`;
+            console.log('Trying chunk:', chunkUrl);
+            return this.http.get<T[]>(chunkUrl).pipe(
+              map((chunk) => {
+                index++;
+                return chunk;
+              }),
+              catchError(() => of(null))
+            );
+          }),
+          takeWhile((chunk) => chunk !== null),
+          reduce((all, chunk) => all.concat(chunk!), [] as T[])
         );
-      }),
-      takeWhile((data) => data !== null),
-      reduce((all, chunk) => all.concat(chunk!), [] as T[])
+      })
     );
   }
 }

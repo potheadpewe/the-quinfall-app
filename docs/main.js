@@ -887,10 +887,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ 9452);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 1318);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8445);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 9923);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 1249);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 4205);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common/http */ 3855);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 271);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 9923);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 1249);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 4205);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common/http */ 3855);
 
 
 
@@ -901,29 +902,26 @@ class ItemService {
     this.http = http;
   }
   loadAllChunks(baseName) {
-    let index = 1;
-    let firstFileTried = false;
-    return (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.expand)(() => {
-      let fileName;
-      // First try the singular file, e.g. items_data.json
-      if (!firstFileTried) {
-        fileName = `${baseName}_data.json`;
-        firstFileTried = true;
-      } else {
-        // Then try the numbered chunks: items_data1.json, items_data2.json...
-        fileName = `${baseName}_data${index}.json`;
-        index++;
-      }
-      const url = `${this.basePath}data/${fileName}`;
-      console.log(`Loading: ${url}`);
-      return this.http.get(url).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null)) // Stop when file doesn't exist
-      );
-    }), (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.takeWhile)(data => data !== null), (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.reduce)((all, chunk) => all.concat(chunk), []));
+    const singularUrl = `${this.basePath}data/${baseName}_data.json`;
+    return this.http.get(singularUrl).pipe(
+    // ✅ If singular file exists, return it
+    (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.map)(data => data || []), (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => {
+      // 🔁 Otherwise, fall back to chunked files
+      let index = 1;
+      return (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.expand)(() => {
+        const chunkUrl = `${this.basePath}data/${baseName}_data${index}.json`;
+        console.log('Trying chunk:', chunkUrl);
+        return this.http.get(chunkUrl).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_3__.map)(chunk => {
+          index++;
+          return chunk;
+        }), (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null)));
+      }), (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.takeWhile)(chunk => chunk !== null), (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.reduce)((all, chunk) => all.concat(chunk), []));
+    }));
   }
   static ɵfac = function ItemService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || ItemService)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClient));
+    return new (__ngFactoryType__ || ItemService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_7__.HttpClient));
   };
-  static ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjectable"]({
+  static ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
     token: ItemService,
     factory: ItemService.ɵfac,
     providedIn: 'root'
