@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MATERIAL_IMPORTS } from './assets/material-imports';
-import { language, Item, Profession, Material, Prop } from './assets/models';
+import { Language, Item, Profession, Material, Prop } from './assets/models';
 import { ItemService } from '../services';
 import { forkJoin } from 'rxjs';
 import { ProfessionNamePipe } from './assets/pipe/profession.pipe';
@@ -17,7 +17,7 @@ export class App  implements OnInit {
   items: Item[] = [];
   props: Prop[] = [];
   materials: Material[] = [];
-  languages: language[] = [];
+  languages: Language[] = [];
   professions: Profession[] = [];
 
   isLoading = true;
@@ -38,11 +38,11 @@ export class App  implements OnInit {
     this.hasError = false;
 
     forkJoin({
-      items: this.itemService.getJsonFile<Item[]>('items_data.json'),
-      props: this.itemService.getJsonFile<Prop[]>('props_data.json'),
-      materials: this.itemService.getJsonFile<Material[]>('materials_data.json'),
-      languages: this.itemService.getJsonFile<language[]>('languages_data.json'),
-      professions: this.itemService.getJsonFile<Profession[]>('professions_data.json')
+      items: this.itemService.loadAllChunks<Item>('items'),
+      props: this.itemService.loadAllChunks<Prop>('props'),
+      materials: this.itemService.loadAllChunks<Material>('materials'),
+      languages: this.itemService.loadAllChunks<Language>('languages'),
+      professions: this.itemService.loadAllChunks<Profession>('professions'),
     }).subscribe({
       next: ({ items, props, materials, languages, professions }) => {
         this.items = items;
