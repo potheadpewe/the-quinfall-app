@@ -10,10 +10,6 @@ export class ItemService {
 
   constructor(private http: HttpClient) {}
 
-  getJsonFile<T = any>(filename: string) {
-    return this.http.get<T>(`${this.basePath}data/${filename}`);
-  }
-
   loadAllChunks<T>(baseName: string) {
     let index = 1;
     return of(null).pipe(
