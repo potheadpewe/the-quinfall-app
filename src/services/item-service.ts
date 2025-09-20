@@ -13,16 +13,12 @@ export class ItemService {
   loadAllChunks<T>(baseName: string): Observable<T[]> {
     const baseUrl = `${this.basePath}data/`;
     const singularUrl = `${baseUrl}${baseName}_data.json`;
-
     return this.http.get<T[]>(singularUrl).pipe(
       catchError(() => {
         let allChunks: T[] = [];
-
         return of(1).pipe(
           expand(index => {
             const chunkUrl = `${baseUrl}${baseName}_data${index}.json`;
-            console.log('Trying chunk:', chunkUrl);
-
             return this.http.get<T[]>(chunkUrl).pipe(
               tap(chunk => {
                 allChunks = allChunks.concat(chunk);
