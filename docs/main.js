@@ -906,6 +906,7 @@ class ItemService {
     return (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_2__.expand)(() => {
       const fileName = index === 1 ? `${baseName}_data.json` : `${baseName}_data${index}.json`;
       index++;
+      console.log(`${this.basePath}data/${fileName}`);
       return this.http.get(`${this.basePath}data/${fileName}`).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.of)(null)));
     }), (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.takeWhile)(data => data !== null), (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.reduce)((all, chunk) => all.concat(chunk), []));
   }

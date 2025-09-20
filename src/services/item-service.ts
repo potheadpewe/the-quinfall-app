@@ -21,6 +21,7 @@ export class ItemService {
         const fileName =
           index === 1 ? `${baseName}_data.json` : `${baseName}_data${index}.json`;
         index++;
+        console.log(`${this.basePath}data/${fileName}`);
         return this.http.get<T[]>(`${this.basePath}data/${fileName}`).pipe(
           catchError(() => of(null))
         );
