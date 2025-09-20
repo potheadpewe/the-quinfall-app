@@ -1,0 +1,198 @@
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="hasError" class="error">
+  Error loading items: {{ errorMessage }}
+</div>
+
+<!-- HEADER SECTION -->
+<div *ngIf="!isLoading && !hasError" class="language-container">
+  <!-- LOGO -->
+  <div class="logo-wrapper">
+    <span class="app-logo"></span>
+  </div>
+  <!-- LANGUAGE SELECTION SECTION -->
+  <mat-form-field appearance="fill">
+    <mat-label>Select Language</mat-label>
+    <mat-select [(value)]="selectedLanguage">
+      <mat-option *ngFor="let lang of languages" [value]="lang.description">
+        {{ lang.description }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<!-- APP CODE -->
+<mat-accordion multi>
+  <!-- Materials Accordion -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Materials ({{ filteredMaterials.length }})
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <!-- MATERIALS SEARCH -->
+    <div *ngIf="!isLoading && !hasError" class="search-container">
+      <mat-form-field appearance="fill">
+        <mat-label>Search Materials</mat-label>
+        <input matInput [(ngModel)]="materialSearchText" placeholder="Enter material name" />
+      </mat-form-field>
+    </div>
+    <!-- MATERIALS SECTION -->
+    <div *ngIf="!isLoading && !hasError" class="items-container">
+      <mat-card *ngFor="let material of filteredMaterials" class="item-card">
+        <mat-card-header>
+          <img mat-card-avatar [src]="getIcon(material)" alt="{{ material.baslik_loc_English }} icon" />
+          <mat-card-title>{{ material['baslik_loc_' + selectedLanguage] || material.baslik_loc_English }}</mat-card-title>
+          <mat-card-subtitle>
+            Level: {{ material.level }} | Weight: {{ material.weight }} | Price: {{ material.sale_price }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-expansion-panel *ngIf="material['recipes'].length > 0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Crafting Recipes ({{ material['recipes'].length }})</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let recipe of material['recipes']" class="recipe-container">
+            <p><strong>Tier:</strong> {{ recipe.tier }} |
+              <strong>Time:</strong> {{ recipe.time }}s |
+              <strong>EXP:</strong> {{ recipe.exp }}</p>
+            <p><strong>Profession:</strong>
+              {{ recipe.profession_no | professionName:professions:selectedLanguage }} |
+              Level: {{ recipe.profession_level }}
+            </p>
+            <table mat-table [dataSource]="recipe.requirements" class="mat-elevation-z8 material-table">
+              <!-- Material Name Column -->
+              <ng-container matColumnDef="materialName">
+                <th mat-header-cell *matHeaderCellDef> Material </th>
+                <td mat-cell *matCellDef="let element">
+                  <img class="material-icon"
+                      [src]="element.material?.icon || element.prop?.icon || placeholderIcon"
+                      alt="{{ (element.material?.['baslik_loc_' + selectedLanguage] || element.prop?.['baslik_loc_' + selectedLanguage] || element.material?.baslik_loc_English || element.prop?.baslik_loc_English) + ' icon' }}" />
+                  {{ element.material?.['baslik_loc_' + selectedLanguage] ||
+                    element.prop?.['baslik_loc_' + selectedLanguage] ||
+                    element.material?.baslik_loc_English ||
+                    element.prop?.baslik_loc_English }}
+                </td>
+              </ng-container>
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Quantity </th>
+                <td mat-cell *matCellDef="let element"> {{ element.quantity | number }} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['materialName', 'quantity']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['materialName', 'quantity']"></tr>
+            </table>
+          </div>
+        </mat-expansion-panel>
+      </mat-card>
+    </div>
+  </mat-expansion-panel>
+  <!-- Items Accordion -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Items ({{ filteredItems.length }})
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <!-- ITEMS SEARCH -->
+    <div *ngIf="!isLoading && !hasError" class="search-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search Items</mat-label>
+        <input matInput [(ngModel)]="itemSearchText" placeholder="Search items by name" />
+      </mat-form-field>
+    </div>
+    <!-- ITEMS SECTION -->
+    <div *ngIf="!isLoading && !hasError" class="items-container">
+      <mat-card *ngFor="let item of filteredItems" class="item-card" [ngClass]="{ 'highlight-background': item.gender > 0 }">
+          <mat-card-header>
+            <img mat-card-avatar [src]="getIcon(item)" alt="{{item.baslik_loc_English}} icon" />
+            <mat-card-title>{{ item['baslik_loc_' + selectedLanguage] || item.baslik_loc_English }}</mat-card-title>
+            <mat-card-subtitle>Level: {{ item.level }} | AP: {{ item.physical_ap }} | Price: {{ item.sale_price }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-expansion-panel *ngIf="item.recipes && item.recipes.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Crafting Recipes ({{ item.recipes.length }})</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let recipe of item.recipes" class="recipe-container">
+              <p><strong>Tier:</strong> {{ recipe.tier }} | <strong>Time:</strong> {{ recipe.time }}s | <strong>EXP:</strong> {{ recipe.exp }}</p>
+              <p><strong>Profession:</strong> {{ recipe.profession_no | professionName:professions:selectedLanguage }} | Level: {{ recipe.profession_level }}</p>
+              <table mat-table [dataSource]="recipe.requirements" class="mat-elevation-z8 material-table">
+                <!-- Material Name Column -->
+                <ng-container matColumnDef="materialName">
+                  <th mat-header-cell *matHeaderCellDef> Material </th>
+                  <td mat-cell *matCellDef="let element">
+                    <img class="material-icon" [src]="element.material.icon || placeholderIcon" alt="{{ element.material['baslik_loc_' + selectedLanguage] || element.material.baslik_loc_English }} icon" />
+                    {{ element.material['baslik_loc_' + selectedLanguage] || element.material.baslik_loc_English }}
+                  </td>
+                </ng-container>
+                <!-- Quantity Column -->
+                <ng-container matColumnDef="quantity">
+                  <th mat-header-cell *matHeaderCellDef> Quantity </th>
+                  <td mat-cell *matCellDef="let element"> {{ element.quantity | number }} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['materialName', 'quantity']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['materialName', 'quantity']"></tr>
+              </table>
+            </div>
+          </mat-expansion-panel>
+        </mat-card>
+    </div>
+  </mat-expansion-panel>
+  <!-- Props Accordion -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Props ({{ filteredProps.length }})
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <!-- PROPS SEARCH -->
+    <div *ngIf="!isLoading && !hasError" class="search-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search Props</mat-label>
+        <input matInput [(ngModel)]="propSearchText" placeholder="Search props by name" />
+      </mat-form-field>
+    </div>
+    <!-- PROPS SECTION -->
+    <div *ngIf="!isLoading && !hasError" class="items-container">
+      <mat-card *ngFor="let pro of filteredProps" class="item-card">
+        <mat-card-header>
+          <img mat-card-avatar [src]="getIcon(pro)" alt="{{ pro.baslik_loc_English }} icon" />
+          <mat-card-title>{{ pro['baslik_loc_' + selectedLanguage] || pro.baslik_loc_English }}</mat-card-title>
+          <mat-card-subtitle>Level: {{ pro.level }} | Weight: {{ pro.weight }} | Price: {{ pro.sale_price }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-expansion-panel *ngIf="pro['recipes'].length > 0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Crafting Recipes ({{ pro['recipes'].length }})</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let recipe of pro['recipes']" class="recipe-container">
+            <p><strong>Tier:</strong> {{ recipe.tier }} | <strong>Time:</strong> {{ recipe.time }}s | <strong>EXP:</strong> {{ recipe.exp }}</p>
+            <p><strong>Profession:</strong> {{ recipe.profession_no | professionName:professions:selectedLanguage }} | Level: {{ recipe.profession_level }}</p>
+            <table mat-table [dataSource]="recipe.requirements" class="mat-elevation-z8 material-table">
+              <!-- Material Name Column -->
+              <ng-container matColumnDef="materialName">
+                <th mat-header-cell *matHeaderCellDef> Material </th>
+                <td mat-cell *matCellDef="let element">
+                  <img class="material-icon"
+                      [src]="element.material?.icon || element.pro?.icon || placeholderIcon"
+                      alt="{{ (element.material?.['baslik_loc_' + selectedLanguage] || element.pro?.['baslik_loc_' + selectedLanguage] || element.material?.baslik_loc_English || element.pro?.baslik_loc_English) + ' icon' }}" />
+                  {{ element.material?.['baslik_loc_' + selectedLanguage] ||
+                    element.pro?.['baslik_loc_' + selectedLanguage] ||
+                    element.material?.baslik_loc_English ||
+                    element.pro?.baslik_loc_English }}
+                </td>
+              </ng-container>
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Quantity </th>
+                <td mat-cell *matCellDef="let element"> {{ element.quantity | number }} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="['materialName', 'quantity']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['materialName', 'quantity']"></tr>
+            </table>
+          </div>
+        </mat-expansion-panel>
+      </mat-card>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
