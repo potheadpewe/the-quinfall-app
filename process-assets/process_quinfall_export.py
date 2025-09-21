@@ -170,9 +170,9 @@ def process_tablosu(tablosu_name, cursor):
     table_columns = [row[1] for row in cursor.fetchall()]
     has_icon1 = 'icon1' in table_columns
     has_icon2 = 'icon2' in table_columns
-    has_satis_kapal = 'satis_kapal' in table_columns
+    has_satis_kapal = 'satis_kapali' in table_columns
     if has_satis_kapal:
-        cursor.execute(f"SELECT * FROM {tablosu_name} WHERE satis_kapal != 1")
+        cursor.execute(f"SELECT * FROM {tablosu_name} WHERE satis_kapali != 1")
     else:
         cursor.execute(f"SELECT * FROM {tablosu_name}")
     rows = cursor.fetchall()
@@ -214,7 +214,7 @@ def process_tablosu(tablosu_name, cursor):
             recipe_id = recipe_data.get('id') or f"recipe_{recipe_data['craft_item_id']}"
             recipe_data['id'] = recipe_id
 
-            cursor.execute("SELECT * FROM recipe_requirement WHERE craft_item_id = ?", (recipe_data['craft_item_id'],))
+            cursor.execute("SELECT * FROM recipe_requirement WHERE craft_item_id = ? AND craft_recipe_no = ?", (recipe_data['craft_item_id'], recipe_data['craft_recipe_no']))
             requirement_rows = cursor.fetchall()
             req_colnames = [desc[0] for desc in cursor.description]
             requirements = []

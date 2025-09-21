@@ -73,6 +73,7 @@
     "recipes": [
       {
         "craft_item_id": "10424",
+        "craft_recipe_no": 1,
         "material_name": "Sardine",
         "profession_no": 26,
         "profession_level": 0,
@@ -84,6 +85,7 @@
         "requirements": [
           {
             "craft_item_id": "10424",
+            "craft_recipe_no": 1,
             "material_id": "13401",
             "quantity": "0004",
             "material": {
@@ -158,6 +160,7 @@
           },
           {
             "craft_item_id": "10424",
+            "craft_recipe_no": 1,
             "material_id": "13402",
             "quantity": "0002",
             "material": {
@@ -454,6 +457,7 @@
     "recipes": [
       {
         "craft_item_id": "10427",
+        "craft_recipe_no": 1,
         "material_name": "Anchovy",
         "profession_no": 26,
         "profession_level": 0,
@@ -465,6 +469,7 @@
         "requirements": [
           {
             "craft_item_id": "10427",
+            "craft_recipe_no": 1,
             "material_id": "13401",
             "quantity": "0001",
             "material": {
@@ -539,6 +544,7 @@
           },
           {
             "craft_item_id": "10427",
+            "craft_recipe_no": 1,
             "material_id": "13402",
             "quantity": "0001",
             "material": {
@@ -835,6 +841,7 @@
     "recipes": [
       {
         "craft_item_id": "10430",
+        "craft_recipe_no": 1,
         "material_name": "Tuna",
         "profession_no": 26,
         "profession_level": 0,
@@ -846,6 +853,7 @@
         "requirements": [
           {
             "craft_item_id": "10430",
+            "craft_recipe_no": 1,
             "material_id": "13401",
             "quantity": "0004",
             "material": {
@@ -920,6 +928,7 @@
           },
           {
             "craft_item_id": "10430",
+            "craft_recipe_no": 1,
             "material_id": "13402",
             "quantity": "0002",
             "material": {
@@ -1216,6 +1225,7 @@
     "recipes": [
       {
         "craft_item_id": "10433",
+        "craft_recipe_no": 1,
         "material_name": "Lanternfish",
         "profession_no": 26,
         "profession_level": 0,
@@ -1227,6 +1237,7 @@
         "requirements": [
           {
             "craft_item_id": "10433",
+            "craft_recipe_no": 1,
             "material_id": "13401",
             "quantity": "0003",
             "material": {
@@ -1301,6 +1312,7 @@
           },
           {
             "craft_item_id": "10433",
+            "craft_recipe_no": 1,
             "material_id": "13402",
             "quantity": "0002",
             "material": {
@@ -1597,6 +1609,7 @@
     "recipes": [
       {
         "craft_item_id": "10436",
+        "craft_recipe_no": 1,
         "material_name": "Shark",
         "profession_no": 26,
         "profession_level": 0,
@@ -1608,6 +1621,7 @@
         "requirements": [
           {
             "craft_item_id": "10436",
+            "craft_recipe_no": 1,
             "material_id": "13401",
             "quantity": "0006",
             "material": {
@@ -1682,6 +1696,7 @@
           },
           {
             "craft_item_id": "10436",
+            "craft_recipe_no": 1,
             "material_id": "13402",
             "quantity": "0003",
             "material": {
@@ -1978,6 +1993,7 @@
     "recipes": [
       {
         "craft_item_id": "10439",
+        "craft_recipe_no": 1,
         "material_name": "Worm",
         "profession_no": 26,
         "profession_level": 0,
@@ -1989,6 +2005,7 @@
         "requirements": [
           {
             "craft_item_id": "10439",
+            "craft_recipe_no": 1,
             "material_id": "13403",
             "quantity": "0002",
             "material": {

@@ -68,11 +68,21 @@ VALUES
 /*
 	DROP AND RECREATE VIEWS
 */
+DROP VIEW IF EXISTS craft_table;
+
+CREATE VIEW craft_table AS
+select 
+    row_number() over (partition by item_id order by item_id asc) as craft_recipe_no,
+    * 
+from craft_tablosu
+;
+
 DROP VIEW IF EXISTS item_recipes;
 
 CREATE VIEW item_recipes AS
 select 
     substr(c.item_id, 1, instr(c.item_id, '_') - 1) as craft_item_id,
+    craft_recipe_no,
     m.baslik_loc_english as material_name,
     c.meslek_no as profession_no,
     c.min_meslek_level as profession_level,
@@ -80,11 +90,12 @@ select
     c.tier,
     c.time,
     'material' type
-from craft_tablosu c
+from craft_table c
 join material_tablosu m on m.id=substr(c.item_id, 1, instr(c.item_id, '_') - 1)
 union all
 select 
     substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) as craft_item_id,
+    craft_recipe_no,
     m.baslik_loc_english as material_name,
     c.meslek_no as profession_no,
     c.min_meslek_level as profession_level,
@@ -92,11 +103,12 @@ select
     c.tier,
     c.time,
     'item' type
-from craft_tablosu c
+from craft_table c
 join item_tablosu m on m.id=substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1)
 union all
 select 
     substr(c.item_id, 1, instr(c.item_id, '_') - 1) as craft_item_id,
+    craft_recipe_no,
     m.baslik_loc_english as material_name,
     c.meslek_no as profession_no,
     c.min_meslek_level as profession_level,
@@ -104,7 +116,7 @@ select
     c.tier,
     c.time,
     'prop' type
-from craft_tablosu c
+from craft_table c
 join prop_tablosu m on m.id=substr(c.item_id, 1, instr(c.item_id, '_') - 1)
 ;
 
@@ -113,71 +125,81 @@ DROP VIEW IF EXISTS recipe_requirement;
 CREATE VIEW recipe_requirement AS
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_1, 1, instr(malzeme_1, '_') - 1) as material_id,
     substr(malzeme_1, instr(malzeme_1, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_1 is not null and malzeme_1 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_2, 1, instr(malzeme_2, '_') - 1) as material_id,
     substr(malzeme_2, instr(malzeme_2, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_2 is not null and malzeme_2 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_3, 1, instr(malzeme_3, '_') - 1) as material_id,
     substr(malzeme_3, instr(malzeme_3, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_3 is not null and malzeme_3 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_4, 1, instr(malzeme_4, '_') - 1) as material_id,
     substr(malzeme_4, instr(malzeme_4, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_4 is not null and malzeme_4 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_5, 1, instr(malzeme_5, '_') - 1) as material_id,
     substr(malzeme_5, instr(malzeme_5, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_5 is not null and malzeme_5 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_6, 1, instr(malzeme_6, '_') - 1) as material_id,
     substr(malzeme_6, instr(malzeme_6, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_6 is not null and malzeme_6 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_7, 1, instr(malzeme_7, '_') - 1) as material_id,
     substr(malzeme_7, instr(malzeme_7, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_7 is not null and malzeme_7 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_8, 1, instr(malzeme_8, '_') - 1) as material_id,
     substr(malzeme_8, instr(malzeme_8, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_8 is not null and malzeme_8 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+    craft_recipe_no,
     substr(malzeme_9, 1, instr(malzeme_9, '_') - 1) as material_id,
     substr(malzeme_9, instr(malzeme_9, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_9 is not null and malzeme_9 != ''
 union all
 select 
     case when length(substr(item_id, 1, instr(item_id, '_') - 1)) > 1 then substr(item_id, 1, instr(item_id, '_') - 1) else substr(item_id, 1, instr(item_id, '_') + instr(substr(item_id, instr(item_id, '_') + 1), '_') - 1) end as craft_item_id,
+	craft_recipe_no,
     substr(malzeme_10, 1, instr(malzeme_10, '_') - 1) as material_id,
     substr(malzeme_10, instr(malzeme_10, '_') + 1) as quantity
-from craft_tablosu
+from craft_table
 where malzeme_10 is not null and malzeme_10 != ''
 ;
